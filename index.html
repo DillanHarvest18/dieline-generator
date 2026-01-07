@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Rigid Setup Box Dieline Generator</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 1.5rem;
+      background: #f5f5f5;
+      color: #222;
+    }
+    h1 {
+      font-size: 1.4rem;
+      margin-bottom: 0.5rem;
+    }
+    h2 {
+      font-size: 1.1rem;
+      margin: 0 0 0.5rem 0;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+      margin-bottom: 0.15rem;
+    }
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      max-width: 240px;
+      padding: 0.35rem 0.5rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 0.9rem;
+      background: #fff;
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      align-items: flex-end;
+    }
+    .row > div {
+      min-width: 190px;
+    }
+    button {
+      padding: 0.4rem 0.9rem;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      background: #005bbb;
+      color: #fff;
+      margin-top: 0.75rem;
+      margin-right: 0.5rem;
+    }
+    button:hover {
+      background: #004999;
+    }
+    .preview-wrapper {
+      overflow: auto;
+      background: #fff;
+      border-radius: 8px;
+      padding: 0.75rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      max-height: 80vh;
+      margin-bottom: 1rem;
+    }
+    .preview svg {
+      border: 1px solid #ddd;
+      background: #fafafa;
+    }
+    .download-link {
+      display: inline-block;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      margin-right: 0.75rem;
+    }
+    .status {
+      margin-top: 0.75rem;
+      padding: 0.6rem 0.75rem;
+      border-radius: 6px;
+      border: 1px solid #cfe0ff;
+      background: #f1f5ff;
+      color: #123;
+      font-size: 0.9rem;
+      max-width: 900px;
+    }
+    .status.bad {
+      border-color: #ffd0d0;
+      background: #fff1f1;
+      color: #410;
+    }
+  </style>
+</head>
+<body>
+  <!-- BASE GENERATOR (unchanged behavior) -->
+  <div class="card">
+    <h1>Rigid Setup Box Dieline Generator</h1>
+    <p style="font-size:0.9rem; max-width: 640px;">
+      This uses your locked 5-panel template: center panel = L×W, end flaps = (W + 2×Caliper) × D,
+      side flaps = L × D. Cut lines = red, score lines = blue dashed, and numeric-only annotations
+      (4 decimals) are oriented parallel to their lines. Artboard is padded so all annotations are visible.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Base Dieline</h2>
+    <div class="row">
+      <div>
+        <label for="description">Description / Label</label>
+        <input type="text" id="description" placeholder="e.g. PRE2114 Base" />
+      </div>
+      <div>
+        <label for="length">Length (inches)</label>
+        <input type="number" id="length" step="0.0001" />
+      </div>
+      <div>
+        <label for="width">Width (inches)</label>
+        <input type="number" id="width" step="0.0001" />
+      </div>
+      <div>
+        <label for="depth">Depth (inches)</label>
+        <input type="number" id="depth" step="0.0001" />
+      </div>
+      <div>
+        <label for="caliper">Caliper (inches)</label>
+        <input type="number" id="caliper" step="0.0001" />
+      </div>
+    </div>
+
+    <button id="generateBtn">Generate Base Dieline</button>
+    <a id="downloadLink" class="download-link" href="#" download="base_dieline.svg" style="display:none;">
+      Download Base SVG
+    </a>
+  </div>
+
+  <div class="preview-wrapper">
+    <div id="preview" class="preview"></div>
+  </div>
+
+  <!-- LID GENERATOR (unchanged behavior) -->
+  <div class="card">
+    <h2>Lid Dieline</h2>
+    <div class="row">
+      <div>
+        <label for="descriptionLid">Description / Label</label>
+        <input type="text" id="descriptionLid" placeholder="e.g. PRE2114 Lid" />
+      </div>
+      <div>
+        <label for="lengthLid">Length (inches)</label>
+        <input type="number" id="lengthLid" step="0.0001" />
+      </div>
+      <div>
+        <label for="widthLid">Width (inches)</label>
+        <input type="number" id="widthLid" step="0.0001" />
+      </div>
+      <div>
+        <label for="depthLid">Depth (inches)</label>
+        <input type="number" id="depthLid" step="0.0001" />
+      </div>
+      <div>
+        <label for="caliperLid">Caliper (inches)</label>
+        <input type="number" id="caliperLid" step="0.0001" />
+      </div>
+    </div>
+
+    <button id="generateLidBtn">Generate Lid Dieline</button>
+    <a id="downloadLinkLid" class="download-link" href="#" download="lid_dieline.svg" style="display:none;">
+      Download Lid SVG
+    </a>
+  </div>
+
+  <div class="preview-wrapper">
+    <div id="previewLid" class="preview"></div>
+  </div>
+
+  <!-- ===== ADD-ON: SHEET LAYOUT (does not change Base/Lid generator) ===== -->
+  <div class="card">
+    <h2>Sheet Layout</h2>
+    <p style="font-size:0.9rem; max-width: 900px; margin: 0 0 0.5rem 0;">
+      Grain standard: the chipboard grain must run parallel with the <b>Length (L)</b> of the base and lid blanks.
+      Select the sheet direction (Width or Height) that your supplier will cut the grain parallel to; the layout will
+      rotate dielines as needed so each blank’s L runs with that grain direction.
+    </p>
+
+    <div class="row">
+      <div>
+        <label for="sheetW">Sheet Width (inches)</label>
+        <input type="number" id="sheetW" step="0.0001" value="46" />
+      </div>
+      <div>
+        <label for="sheetH">Sheet Height (inches)</label>
+        <input type="number" id="sheetH" step="0.0001" value="35" />
+      </div>
+      <div>
+        <label for="grainDir">Sheet grain runs parallel to</label>
+        <select id="grainDir">
+          <option value="width">Sheet Width</option>
+          <option value="height">Sheet Height</option>
+        </select>
+      </div>
+      <div>
+        <label for="sheetMargin">Sheet Margin (inches)</label>
+        <input type="number" id="sheetMargin" step="0.0001" value="0.50" />
+      </div>
+      <div>
+        <label for="sheetGap">Gap between dielines (inches)</label>
+        <input type="number" id="sheetGap" step="0.0001" value="0.25" />
+      </div>
+      <div>
+        <label for="qtyBase">Qty Base</label>
+        <input type="number" id="qtyBase" step="1" min="0" value="1" />
+      </div>
+      <div>
+        <label for="qtyLid">Qty Lid</label>
+        <input type="number" id="qtyLid" step="1" min="0" value="1" />
+      </div>
+    </div>
+
+    <button id="generateSheetBtn">Generate Sheet Layout</button>
+    <button id="printSheetBtn">Open Print View (Save as PDF)</button>
+    <a id="downloadLinkSheet" class="download-link" href="#" download="sheet_layout.svg" style="display:none;">
+      Download Sheet SVG
+    </a>
+
+    <div id="sheetStatus" class="status" style="display:none;"></div>
+  </div>
+
+  <div class="preview-wrapper">
+    <div id="previewSheet" class="preview"></div>
+  </div>
+
+  <script>
+    function fmt4(x) {
+      return x.toFixed(4);
+    }
+
+    // LOCKED GEOMETRY + ANNOTATION LOGIC (UNCHANGED)
+    function buildDielineSVG(description, L, W, D, C) {
+      // Artboard & margin (inches)
+      const margin = 0.75;
+      const totalW = L + 2 * D;
+      const totalH = W + 2 * D;
+      const svgW = totalW + 2 * margin;
+      const svgH = totalH + 2 * margin;
+
+      // Origin for geometry
+      const ox = margin;
+      const oy = margin;
+
+      const cx = ox + D;
+      const cy = oy + D;
+
+      const x0 = ox;
+      const x2 = ox + D;
+      const yCenterTop = oy + D;
+      const yCenterBottom = oy + D + W;
+      const yTop = cy - C;        // = yCenterTop - C
+      const yBot = cy + W + C;    // = yCenterBottom + C
+
+      // End flaps height along width direction
+      const flapH = W + 2 * C;
+
+      let svg = "";
+      svg += `<svg xmlns="http://www.w3.org/2000/svg"
+        width="${svgW}in" height="${svgH}in"
+        viewBox="0 0 ${svgW} ${svgH}">
+        <style>
+          .cut {
+            fill: none;
+            stroke: red;
+            stroke-width: 0.02;
+          }
+          .score {
+            fill: none;
+            stroke: blue;
+            stroke-width: 0.02;
+            stroke-dasharray: 0.2 0.2;
+          }
+          text {
+            font-family: Arial, sans-serif;
+          }
+        </style>
+      `;
+
+      svg += `<g id="piece">`;
+
+      // Center panel (score)
+      svg += `<rect x="${cx}" y="${cy}" width="${L}" height="${W}" class="score" />`;
+
+      // ---- Flap geometry ----
+
+      // Left end flap
+      svg += `<path d="M ${x0},${yTop} L ${x0},${yBot} L ${x2},${yBot}" class="cut" />`;
+      svg += `<path d="M ${x0},${yTop} L ${x2},${yTop}" class="cut" />`;
+
+      // Right end flap
+      const rx0 = cx + L;
+      const rx1 = rx0 + D;
+      svg += `<path d="M ${rx0},${yTop} L ${rx1},${yTop} L ${rx1},${yBot}" class="cut" />`;
+      svg += `<path d="M ${rx1},${yBot} L ${rx0},${yBot}" class="cut" />`;
+
+      // Top side flap
+      const tx0 = cx;
+      const tx1 = cx + L;
+      const ty0 = oy;
+      const ty1 = oy + D;
+      svg += `<path d="M ${tx0},${ty1} L ${tx0},${ty0} L ${tx1},${ty0} L ${tx1},${ty1}" class="cut" />`;
+
+      // Bottom side flap
+      const by0 = cy + W;
+      const by1 = by0 + D;
+      const bx0 = cx;
+      const bx1 = cx + L;
+      svg += `<path d="M ${bx1},${by0} L ${bx1},${by1} L ${bx0},${by1} L ${bx0},${by0}" class="cut" />`;
+
+      // ---- Center label ----
+      const labelText = `${description}  ${fmt4(L)}" x ${fmt4(W)}" x ${fmt4(D)}" - cal ${fmt4(C)}`;
+      svg += `<text x="${cx + L / 2}" y="${cy + W / 2}" font-size="0.18"
+                text-anchor="middle" dominant-baseline="middle">${labelText}</text>`;
+
+      // ---- Main Length (above panel) ----
+      svg += `<text x="${cx + L / 2}" y="${cy - 0.25}" font-size="0.22"
+                text-anchor="middle">${fmt4(L)}"</text>`;
+
+      // ---- Main Width (right side, vertical) ----
+      const wx = cx + L + 0.25;
+      const wy = cy + W / 2;
+      svg += `<text x="${wx}" y="${wy}" font-size="0.22"
+                text-anchor="middle"
+                transform="rotate(90 ${wx} ${wy})">${fmt4(W)}"</text>`;
+
+      // ---- End flaps: depth + width (W+2C) ----
+
+      // Left end flap depth (horizontal)
+      const lDepthX = (x0 + x2) / 2;
+      const lDepthY = yTop + 0.22;
+      svg += `<text x="${lDepthX}" y="${lDepthY}" font-size="0.20"
+                text-anchor="middle">${fmt4(D)}"</text>`;
+
+      // Left end flap width (vertical, flap height)
+      const lWidthX = x0 - 0.12;
+      const lWidthY = (yTop + yBot) / 2;
+      svg += `<text x="${lWidthX}" y="${lWidthY}" font-size="0.20"
+                text-anchor="middle"
+                transform="rotate(90 ${lWidthX} ${lWidthY})">${fmt4(flapH)}"</text>`;
+
+      // Right end flap depth (horizontal)
+      const rDepthX = (rx0 + rx1) / 2;
+      const rDepthY = yTop + 0.22;
+      svg += `<text x="${rDepthX}" y="${rDepthY}" font-size="0.20"
+                text-anchor="middle">${fmt4(D)}"</text>`;
+
+      // Right end flap width (vertical, flap height)
+      const rWidthX = rx1 + 0.12;
+      const rWidthY = (yTop + yBot) / 2;
+      svg += `<text x="${rWidthX}" y="${rWidthY}" font-size="0.20"
+                text-anchor="middle"
+                transform="rotate(90 ${rWidthX} ${rWidthY})">${fmt4(flapH)}"</text>`;
+
+      // ---- Side flaps: length + depth ----
+
+      // Top side flap length (horizontal)
+      const topLenX = (tx0 + tx1) / 2;
+      const topLenY = ty0 - 0.22;
+      svg += `<text x="${topLenX}" y="${topLenY}" font-size="0.20"
+                text-anchor="middle">${fmt4(L)}"</text>`;
+
+      // Top side flap depth (vertical)
+      const topDepX = tx0 - 0.12;
+      const topDepY = (ty0 + ty1) / 2;
+      svg += `<text x="${topDepX}" y="${topDepY}" font-size="0.20"
+                text-anchor="middle"
+                transform="rotate(90 ${topDepX} ${topDepY})">${fmt4(D)}"</text>`;
+
+      // Bottom side flap length (horizontal)
+      const botLenX = (bx0 + bx1) / 2;
+      const botLenY = by1 + 0.22;
+      svg += `<text x="${botLenX}" y="${botLenY}" font-size="0.20"
+                text-anchor="middle">${fmt4(L)}"</text>`;
+
+      // Bottom side flap depth (vertical)
+      const botDepX = bx0 - 0.12;
+      const botDepY = (by0 + by1) / 2;
+      svg += `<text x="${botDepX}" y="${botDepY}" font-size="0.20"
+                text-anchor="middle"
+                transform="rotate(90 ${botDepX} ${botDepY})">${fmt4(D)}"</text>`;
+
+      svg += `</g></svg>`;
+      return svg;
+    }
+
+    function generatePiece(descId, LId, WId, DId, CId, previewId, linkId, defaultPrefix) {
+      const desc = document.getElementById(descId).value || defaultPrefix;
+      const L = parseFloat(document.getElementById(LId).value);
+      const W = parseFloat(document.getElementById(WId).value);
+      const D = parseFloat(document.getElementById(DId).value);
+      const C = parseFloat(document.getElementById(CId).value);
+
+      if (isNaN(L) || isNaN(W) || isNaN(D) || isNaN(C) || L <= 0 || W <= 0 || D <= 0 || C <= 0) {
+        alert("Please enter positive numeric values for Length, Width, Depth, and Caliper.");
+        return;
+      }
+
+      const svgString = buildDielineSVG(desc, L, W, D, C);
+
+      // Show in preview
+      const preview = document.getElementById(previewId);
+      preview.innerHTML = svgString;
+
+      // Make downloadable
+      const blob = new Blob([svgString], { type: "image/svg+xml" });
+      const url = URL.createObjectURL(blob);
+      const link = document.getElementById(linkId);
+      link.href = url;
+      link.download = `${desc.replace(/\s+/g, "_")}_dieline.svg`;
+      link.style.display = "inline-block";
+    }
+
+    // Base button
+    document.getElementById("generateBtn").addEventListener("click", () => {
+      generatePiece("description", "length", "width", "depth", "caliper",
+                    "preview", "downloadLink", "Base");
+    });
+
+    // Lid button
+    document.getElementById("generateLidBtn").addEventListener("click", () => {
+      generatePiece("descriptionLid", "lengthLid", "widthLid", "depthLid", "caliperLid",
+                    "previewLid", "downloadLinkLid", "Lid");
+    });
+
+    // ===== Sheet Layout helpers (additive) =====
+    function parseSvgInfo(svgString) {
+      // Extract viewBox width/height (inches units used as numeric in viewBox)
+      const m = svgString.match(/viewBox="0 0 ([0-9.]+) ([0-9.]+)"/);
+      if (!m) return null;
+      const w = parseFloat(m[1]);
+      const h = parseFloat(m[2]);
+
+      // Keep the <style> ... </style> and the <g id="piece"> ... </g>
+      const styleMatch = svgString.match(/<style>[\s\S]*?<\/style>/);
+      const gMatch = svgString.match(/<g id="piece">[\s\S]*?<\/g>/);
+      if (!styleMatch || !gMatch) return null;
+
+      return { w, h, style: styleMatch[0], g: gMatch[0] };
+    }
+
+    function makeDownload(linkEl, content, filename) {
+      const blob = new Blob([content], { type: "image/svg+xml" });
+      const url = URL.createObjectURL(blob);
+      linkEl.href = url;
+      linkEl.download = filename;
+      linkEl.style.display = "inline-block";
+    }
+
+    function sheetGrainGraphics(sheetX, sheetY, sheetW, sheetH, grainDir) {
+      // Double-headed arrows + "grain" label aligned with direction
+      const gc = "#0B5394";
+      const sw = 0.12;
+
+      let out = "";
+      out += `
+        <defs>
+          <marker id="gArrow" markerUnits="strokeWidth" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+            <polygon points="0 0, 10 4, 0 8" fill="${gc}"></polygon>
+          </marker>
+        </defs>
+      `;
+
+      if (grainDir === "height") {
+        // Vertical grain: arrows up and down on left and right
+        const xL = sheetX + 1.2;
+        const xR = sheetX + sheetW - 1.2;
+        const yT = sheetY + 1.0;
+        const yB = sheetY + sheetH - 1.0;
+
+        const dbl = (x) => `
+          <line x1="${x}" y1="${yB}" x2="${x}" y2="${yT}" stroke="${gc}" stroke-width="${sw}" marker-end="url(#gArrow)"/>
+          <line x1="${x}" y1="${yT}" x2="${x}" y2="${yB}" stroke="${gc}" stroke-width="${sw}" marker-end="url(#gArrow)"/>
+        `;
+        out += dbl(xL) + dbl(xR);
+
+        const lx = xL + 0.40;
+        const ly = (yT + yB) / 2;
+        out += `<text x="${lx}" y="${ly}" font-size="0.38" text-anchor="middle"
+          fill="${gc}" font-weight="bold" font-family="Arial"
+          transform="rotate(90 ${lx} ${ly})">grain</text>`;
+      } else {
+        // Horizontal grain: arrows left and right on top and bottom
+        const yT = sheetY + 1.2;
+        const yB = sheetY + sheetH - 1.2;
+        const xL = sheetX + 1.0;
+        const xR = sheetX + sheetW - 1.0;
+
+        const dbl = (y) => `
+          <line x1="${xL}" y1="${y}" x2="${xR}" y2="${y}" stroke="${gc}" stroke-width="${sw}" marker-end="url(#gArrow)"/>
+          <line x1="${xR}" y1="${y}" x2="${xL}" y2="${y}" stroke="${gc}" stroke-width="${sw}" marker-end="url(#gArrow)"/>
+        `;
+        out += dbl(yT) + dbl(yB);
+
+        const lx = (xL + xR) / 2;
+        const ly = yT - 0.25;
+        out += `<text x="${lx}" y="${ly}" font-size="0.38" text-anchor="middle"
+          fill="${gc}" font-weight="bold" font-family="Arial">grain</text>`;
+      }
+
+      return out;
+    }
+
+    function buildSheetLayout() {
+      // Read inputs
+      const sheetW = parseFloat(document.getElementById("sheetW").value);
+      const sheetH = parseFloat(document.getElementById("sheetH").value);
+      const grainDir = document.getElementById("grainDir").value; // "width" or "height"
+      const margin = parseFloat(document.getElementById("sheetMargin").value);
+      const gap = parseFloat(document.getElementById("sheetGap").value);
+      const qtyBase = Math.max(0, parseInt(document.getElementById("qtyBase").value, 10) || 0);
+      const qtyLid = Math.max(0, parseInt(document.getElementById("qtyLid").value, 10) || 0);
+
+      // Pull current Base/Lid inputs (no dependency on whether user clicked generate buttons)
+      const baseDesc = document.getElementById("description").value || "Base";
+      const bL = parseFloat(document.getElementById("length").value);
+      const bW = parseFloat(document.getElementById("width").value);
+      const bD = parseFloat(document.getElementById("depth").value);
+      const bC = parseFloat(document.getElementById("caliper").value);
+
+      const lidDesc = document.getElementById("descriptionLid").value || "Lid";
+      const lL = parseFloat(document.getElementById("lengthLid").value);
+      const lW = parseFloat(document.getElementById("widthLid").value);
+      const lD = parseFloat(document.getElementById("depthLid").value);
+      const lC = parseFloat(document.getElementById("caliperLid").value);
+
+      // Validate
+      const bad =
+        !isFinite(sheetW) || !isFinite(sheetH) || sheetW <= 0 || sheetH <= 0 ||
+        !isFinite(margin) || margin < 0 || !isFinite(gap) || gap < 0 ||
+        (qtyBase + qtyLid) <= 0 ||
+        !isFinite(bL) || !isFinite(bW) || !isFinite(bD) || !isFinite(bC) ||
+        !isFinite(lL) || !isFinite(lW) || !isFinite(lD) || !isFinite(lC) ||
+        bL <= 0 || bW <= 0 || bD <= 0 || bC <= 0 ||
+        lL <= 0 || lW <= 0 || lD <= 0 || lC <= 0;
+
+      if (bad) {
+        alert("Please enter valid positive numbers for Base, Lid, Sheet, and at least one nonzero quantity.");
+        return null;
+      }
+
+      // Build dielines and parse group data
+      const baseSvg = buildDielineSVG(baseDesc, bL, bW, bD, bC);
+      const lidSvg = buildDielineSVG(lidDesc, lL, lW, lD, lC);
+      const baseInfo = parseSvgInfo(baseSvg);
+      const lidInfo = parseSvgInfo(lidSvg);
+      if (!baseInfo || !lidInfo) {
+        alert("Unexpected SVG parsing error.");
+        return null;
+      }
+
+      // Canvas padding around sheet for labels
+      const padL = 0.75, padT = 1.0, padB = 0.75;
+      const canvasW = sheetW + 2 * padL;
+      const canvasH = sheetH + padT + padB;
+
+      const sheetX = padL;
+      const sheetY = padT;
+
+      // Grain standard: grain must align with blank L
+      // If grain runs with sheet HEIGHT, rotate dielines 90° so L aligns vertical.
+      // If grain runs with sheet WIDTH, do not rotate.
+      const rotate90 = (grainDir === "height");
+
+      const placedDims = (info) => rotate90 ? { w: info.h, h: info.w } : { w: info.w, h: info.h };
+
+      // Simple row pack (deterministic): base pieces then lid pieces
+      const pieces = [];
+      for (let i = 0; i < qtyBase; i++) pieces.push({ kind: "Base", info: baseInfo });
+      for (let i = 0; i < qtyLid; i++) pieces.push({ kind: "Lid", info: lidInfo });
+
+      const usableX0 = sheetX + margin;
+      const usableY0 = sheetY + margin;
+      const usableW = sheetW - 2 * margin;
+      const usableH = sheetH - 2 * margin;
+
+      let x = usableX0;
+      let y = usableY0;
+      let rowH = 0;
+      let placed = [];
+
+      for (const p of pieces) {
+        const d = placedDims(p.info);
+
+        if (x !== usableX0 && (x + d.w) > (usableX0 + usableW)) {
+          x = usableX0;
+          y += rowH + gap;
+          rowH = 0;
+        }
+        if ((y + d.h) > (usableY0 + usableH)) break;
+
+        placed.push({ p, x, y });
+        x += d.w + gap;
+        rowH = Math.max(rowH, d.h);
+      }
+
+      const fitsAll = (placed.length === pieces.length);
+
+      // Compose sheet SVG
+      let svg = "";
+      svg += `<svg xmlns="http://www.w3.org/2000/svg"
+        width="${canvasW}in" height="${canvasH}in"
+        viewBox="0 0 ${canvasW} ${canvasH}">`;
+
+      // Bring in dieline styles (same as generator) + sheet style
+      svg += `
+        ${baseInfo.style}
+        <style>
+          .sheetOutline { fill: #ffffff; stroke: #000; stroke-width: 0.10; }
+          .sheetDimText { font-family: Arial, sans-serif; font-size: 0.30px; }
+        </style>
+      `;
+
+      // Sheet outline
+      svg += `<rect x="${sheetX}" y="${sheetY}" width="${sheetW}" height="${sheetH}" class="sheetOutline" />`;
+
+      // Sheet dimensions (numeric only, 4 decimals)
+      svg += `<text x="${sheetX + sheetW/2}" y="${sheetY - 0.35}" class="sheetDimText" text-anchor="middle">${fmt4(sheetW)}"</text>`;
+      const dx = sheetX - 0.35;
+      const dy = sheetY + sheetH/2;
+      svg += `<text x="${dx}" y="${dy}" class="sheetDimText" text-anchor="middle" transform="rotate(90 ${dx} ${dy})">${fmt4(sheetH)}"</text>`;
+
+      // Grain arrows + label
+      svg += sheetGrainGraphics(sheetX, sheetY, sheetW, sheetH, grainDir);
+
+      // Place pieces as groups
+      const placeGroup = (info, px, py) => {
+        if (!rotate90) {
+          return `<g transform="translate(${px} ${py})">${info.g}</g>`;
+        }
+        // rotate 90 around placement origin, then translate up by original height to keep in positive space
+        return `<g transform="translate(${px} ${py}) rotate(90) translate(0 ${-info.h})">${info.g}</g>`;
+      };
+
+      for (const pl of placed) {
+        svg += placeGroup(pl.p.info, pl.x, pl.y);
+      }
+
+      svg += `</svg>`;
+
+      return { svg, fitsAll, placed: placed.length, requested: pieces.length, sheetW, sheetH, rotate90 };
+    }
+
+    let lastSheetSvg = null;
+
+    document.getElementById("generateSheetBtn").addEventListener("click", () => {
+      const result = buildSheetLayout();
+      if (!result) return;
+
+      lastSheetSvg = result.svg;
+
+      document.getElementById("previewSheet").innerHTML = result.svg;
+
+      const status = document.getElementById("sheetStatus");
+      status.style.display = "block";
+
+      if (result.fitsAll) {
+        status.classList.remove("bad");
+        status.textContent = `Fit OK: placed ${result.placed} of ${result.requested} dielines. Grain alignment: blank L is ${result.rotate90 ? "parallel to sheet HEIGHT" : "parallel to sheet WIDTH"}.`;
+      } else {
+        status.classList.add("bad");
+        status.textContent = `DOES NOT FIT: placed ${result.placed} of ${result.requested}. Increase sheet size, reduce quantities, or reduce margin/gap.`;
+      }
+
+      makeDownload(
+        document.getElementById("downloadLinkSheet"),
+        result.svg,
+        `sheet_${fmt4(result.sheetW)}x${fmt4(result.sheetH)}_${result.requested}pcs.svg`.replace(/"/g, "")
+      );
+    });
+
+    document.getElementById("printSheetBtn").addEventListener("click", () => {
+      if (!lastSheetSvg) {
+        alert("Generate the sheet layout first.");
+        return;
+      }
+      const w = window.open("", "_blank");
+      const html = `
+        <!doctype html>
+        <html>
+        <head>
+          <meta charset="utf-8" />
+          <title>Sheet Layout Print View</title>
+          <style>
+            html, body { margin:0; padding:0; background:#fff; }
+            @page { margin: 0; }
+          </style>
+        </head>
+        <body>
+          ${lastSheetSvg}
+          <script>
+            window.onload = () => { /* optional: window.print(); */ };
+          <\/script>
+        </body>
+        </html>
+      `;
+      w.document.open();
+      w.document.write(html);
+      w.document.close();
+    });
+  </script>
+</body>
+</html>

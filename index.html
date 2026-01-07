@@ -297,8 +297,6 @@
       // Center panel (score)
       svg += `<rect x="${cx}" y="${cy}" width="${L}" height="${W}" class="score" />`;
 
-      // ---- Flap geometry ----
-
       // Left end flap
       svg += `<path d="M ${x0},${yTop} L ${x0},${yBot} L ${x2},${yBot}" class="cut" />`;
       svg += `<path d="M ${x0},${yTop} L ${x2},${yTop}" class="cut" />`;
@@ -323,72 +321,62 @@
       const bx1 = cx + L;
       svg += `<path d="M ${bx1},${by0} L ${bx1},${by1} L ${bx0},${by1} L ${bx0},${by0}" class="cut" />`;
 
-      // ---- Center label ----
+      // Center label
       const labelText = `${description}  ${fmt4(L)}" x ${fmt4(W)}" x ${fmt4(D)}" - cal ${fmt4(C)}`;
       svg += `<text x="${cx + L / 2}" y="${cy + W / 2}" font-size="0.18"
                 text-anchor="middle" dominant-baseline="middle">${labelText}</text>`;
 
-      // ---- Main Length (above panel) ----
+      // Main Length
       svg += `<text x="${cx + L / 2}" y="${cy - 0.25}" font-size="0.22"
                 text-anchor="middle">${fmt4(L)}"</text>`;
 
-      // ---- Main Width (right side, vertical) ----
+      // Main Width
       const wx = cx + L + 0.25;
       const wy = cy + W / 2;
       svg += `<text x="${wx}" y="${wy}" font-size="0.22"
                 text-anchor="middle"
                 transform="rotate(90 ${wx} ${wy})">${fmt4(W)}"</text>`;
 
-      // ---- End flaps: depth + width (W+2C) ----
-
-      // Left end flap depth (horizontal)
+      // End flaps: depth + width (W+2C)
       const lDepthX = (x0 + x2) / 2;
       const lDepthY = yTop + 0.22;
       svg += `<text x="${lDepthX}" y="${lDepthY}" font-size="0.20"
                 text-anchor="middle">${fmt4(D)}"</text>`;
 
-      // Left end flap width (vertical, flap height)
       const lWidthX = x0 - 0.12;
       const lWidthY = (yTop + yBot) / 2;
       svg += `<text x="${lWidthX}" y="${lWidthY}" font-size="0.20"
                 text-anchor="middle"
                 transform="rotate(90 ${lWidthX} ${lWidthY})">${fmt4(flapH)}"</text>`;
 
-      // Right end flap depth (horizontal)
       const rDepthX = (rx0 + rx1) / 2;
       const rDepthY = yTop + 0.22;
       svg += `<text x="${rDepthX}" y="${rDepthY}" font-size="0.20"
                 text-anchor="middle">${fmt4(D)}"</text>`;
 
-      // Right end flap width (vertical, flap height)
       const rWidthX = rx1 + 0.12;
       const rWidthY = (yTop + yBot) / 2;
       svg += `<text x="${rWidthX}" y="${rWidthY}" font-size="0.20"
                 text-anchor="middle"
                 transform="rotate(90 ${rWidthX} ${rWidthY})">${fmt4(flapH)}"</text>`;
 
-      // ---- Side flaps: length + depth ----
-
-      // Top side flap length (horizontal)
+      // Side flaps: length + depth
       const topLenX = (tx0 + tx1) / 2;
       const topLenY = ty0 - 0.22;
       svg += `<text x="${topLenX}" y="${topLenY}" font-size="0.20"
                 text-anchor="middle">${fmt4(L)}"</text>`;
 
-      // Top side flap depth (vertical)
       const topDepX = tx0 - 0.12;
       const topDepY = (ty0 + ty1) / 2;
       svg += `<text x="${topDepX}" y="${topDepY}" font-size="0.20"
                 text-anchor="middle"
                 transform="rotate(90 ${topDepX} ${topDepY})">${fmt4(D)}"</text>`;
 
-      // Bottom side flap length (horizontal)
       const botLenX = (bx0 + bx1) / 2;
       const botLenY = by1 + 0.22;
       svg += `<text x="${botLenX}" y="${botLenY}" font-size="0.20"
                 text-anchor="middle">${fmt4(L)}"</text>`;
 
-      // Bottom side flap depth (vertical)
       const botDepX = bx0 - 0.12;
       const botDepY = (by0 + by1) / 2;
       svg += `<text x="${botDepX}" y="${botDepY}" font-size="0.20"
@@ -440,13 +428,11 @@
 
     // ===== Sheet Layout helpers (additive) =====
     function parseSvgInfo(svgString) {
-      // Extract viewBox width/height (inches units used as numeric in viewBox)
       const m = svgString.match(/viewBox="0 0 ([0-9.]+) ([0-9.]+)"/);
       if (!m) return null;
       const w = parseFloat(m[1]);
       const h = parseFloat(m[2]);
 
-      // Keep the <style> ... </style> and the <g id="piece"> ... </g>
       const styleMatch = svgString.match(/<style>[\s\S]*?<\/style>/);
       const gMatch = svgString.match(/<g id="piece">[\s\S]*?<\/g>/);
       if (!styleMatch || !gMatch) return null;
@@ -462,8 +448,8 @@
       linkEl.style.display = "inline-block";
     }
 
+    // GRAIN GRAPHICS (this is the version with arrows INSIDE the sheet)
     function sheetGrainGraphics(sheetX, sheetY, sheetW, sheetH, grainDir) {
-      // Double-headed arrows + "grain" label aligned with direction
       const gc = "#0B5394";
       const sw = 0.12;
 
@@ -477,7 +463,6 @@
       `;
 
       if (grainDir === "height") {
-        // Vertical grain: arrows up and down on left and right
         const xL = sheetX + 1.2;
         const xR = sheetX + sheetW - 1.2;
         const yT = sheetY + 1.0;
@@ -495,7 +480,6 @@
           fill="${gc}" font-weight="bold" font-family="Arial"
           transform="rotate(90 ${lx} ${ly})">grain</text>`;
       } else {
-        // Horizontal grain: arrows left and right on top and bottom
         const yT = sheetY + 1.2;
         const yB = sheetY + sheetH - 1.2;
         const xL = sheetX + 1.0;
@@ -517,7 +501,6 @@
     }
 
     function buildSheetLayout() {
-      // Read inputs
       const sheetW = parseFloat(document.getElementById("sheetW").value);
       const sheetH = parseFloat(document.getElementById("sheetH").value);
       const grainDir = document.getElementById("grainDir").value; // "width" or "height"
@@ -526,7 +509,6 @@
       const qtyBase = Math.max(0, parseInt(document.getElementById("qtyBase").value, 10) || 0);
       const qtyLid = Math.max(0, parseInt(document.getElementById("qtyLid").value, 10) || 0);
 
-      // Pull current Base/Lid inputs (no dependency on whether user clicked generate buttons)
       const baseDesc = document.getElementById("description").value || "Base";
       const bL = parseFloat(document.getElementById("length").value);
       const bW = parseFloat(document.getElementById("width").value);
@@ -539,7 +521,6 @@
       const lD = parseFloat(document.getElementById("depthLid").value);
       const lC = parseFloat(document.getElementById("caliperLid").value);
 
-      // Validate
       const bad =
         !isFinite(sheetW) || !isFinite(sheetH) || sheetW <= 0 || sheetH <= 0 ||
         !isFinite(margin) || margin < 0 || !isFinite(gap) || gap < 0 ||
@@ -554,7 +535,6 @@
         return null;
       }
 
-      // Build dielines and parse group data
       const baseSvg = buildDielineSVG(baseDesc, bL, bW, bD, bC);
       const lidSvg = buildDielineSVG(lidDesc, lL, lW, lD, lC);
       const baseInfo = parseSvgInfo(baseSvg);
@@ -564,7 +544,6 @@
         return null;
       }
 
-      // Canvas padding around sheet for labels
       const padL = 0.75, padT = 1.0, padB = 0.75;
       const canvasW = sheetW + 2 * padL;
       const canvasH = sheetH + padT + padB;
@@ -572,14 +551,9 @@
       const sheetX = padL;
       const sheetY = padT;
 
-      // Grain standard: grain must align with blank L
-      // If grain runs with sheet HEIGHT, rotate dielines 90° so L aligns vertical.
-      // If grain runs with sheet WIDTH, do not rotate.
       const rotate90 = (grainDir === "height");
-
       const placedDims = (info) => rotate90 ? { w: info.h, h: info.w } : { w: info.w, h: info.h };
 
-      // Simple row pack (deterministic): base pieces then lid pieces
       const pieces = [];
       for (let i = 0; i < qtyBase; i++) pieces.push({ kind: "Base", info: baseInfo });
       for (let i = 0; i < qtyLid; i++) pieces.push({ kind: "Lid", info: lidInfo });
@@ -611,13 +585,11 @@
 
       const fitsAll = (placed.length === pieces.length);
 
-      // Compose sheet SVG
       let svg = "";
       svg += `<svg xmlns="http://www.w3.org/2000/svg"
         width="${canvasW}in" height="${canvasH}in"
         viewBox="0 0 ${canvasW} ${canvasH}">`;
 
-      // Bring in dieline styles (same as generator) + sheet style
       svg += `
         ${baseInfo.style}
         <style>
@@ -626,24 +598,19 @@
         </style>
       `;
 
-      // Sheet outline
       svg += `<rect x="${sheetX}" y="${sheetY}" width="${sheetW}" height="${sheetH}" class="sheetOutline" />`;
 
-      // Sheet dimensions (numeric only, 4 decimals)
       svg += `<text x="${sheetX + sheetW/2}" y="${sheetY - 0.35}" class="sheetDimText" text-anchor="middle">${fmt4(sheetW)}"</text>`;
       const dx = sheetX - 0.35;
       const dy = sheetY + sheetH/2;
       svg += `<text x="${dx}" y="${dy}" class="sheetDimText" text-anchor="middle" transform="rotate(90 ${dx} ${dy})">${fmt4(sheetH)}"</text>`;
 
-      // Grain arrows + label
       svg += sheetGrainGraphics(sheetX, sheetY, sheetW, sheetH, grainDir);
 
-      // Place pieces as groups
       const placeGroup = (info, px, py) => {
         if (!rotate90) {
           return `<g transform="translate(${px} ${py})">${info.g}</g>`;
         }
-        // rotate 90 around placement origin, then translate up by original height to keep in positive space
         return `<g transform="translate(${px} ${py}) rotate(90) translate(0 ${-info.h})">${info.g}</g>`;
       };
 

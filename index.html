@@ -186,12 +186,10 @@
   <!-- ===== ADD-ON: SHEET LAYOUT (does not change Base/Lid generator) ===== -->
   <div class="card">
     <h2>Sheet Layout</h2>
-
-    <!-- CHANGE #1: locked grain rule wording -->
     <p style="font-size:0.9rem; max-width: 900px; margin: 0 0 0.5rem 0;">
-      Grain rule (locked): chipboard grain runs parallel with the <b>Length (L)</b> of the base and lid. Period.
-      Choose whether the sheet grain runs parallel to the sheet <b>Width</b> or <b>Height</b>.
-      The layout rotates dielines to enforce L-to-grain.
+      Grain standard: the chipboard grain must run parallel with the <b>Length (L)</b> of the base and lid blanks.
+      Select the sheet direction (Width or Height) that your supplier will cut the grain parallel to; the layout will
+      rotate dielines as needed so each blank’s L runs with that grain direction.
     </p>
 
     <div class="row">
@@ -445,7 +443,7 @@
       linkEl.style.display = "inline-block";
     }
 
-    // CHANGE #2: grain arrows OUTSIDE the sheet
+    // CHANGED: grain arrows + label are OUTSIDE the sheet to avoid overlap
     function sheetGrainGraphics(sheetX, sheetY, sheetW, sheetH, grainDir) {
       const gc = "#0B5394";
       const sw = 0.12;

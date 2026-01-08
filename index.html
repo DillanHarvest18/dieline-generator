@@ -186,10 +186,12 @@
   <!-- ===== ADD-ON: SHEET LAYOUT (does not change Base/Lid generator) ===== -->
   <div class="card">
     <h2>Sheet Layout</h2>
+
+    <!-- CHANGE #1: locked grain rule wording -->
     <p style="font-size:0.9rem; max-width: 900px; margin: 0 0 0.5rem 0;">
-      Grain standard: the chipboard grain must run parallel with the <b>Length (L)</b> of the base and lid blanks.
-      Select the sheet direction (Width or Height) that your supplier will cut the grain parallel to; the layout will
-      rotate dielines as needed so each blank’s L runs with that grain direction.
+      Grain rule (locked): chipboard grain runs parallel with the <b>Length (L)</b> of the base and lid. Period.
+      Choose whether the sheet grain runs parallel to the sheet <b>Width</b> or <b>Height</b>.
+      The layout rotates dielines to enforce L-to-grain.
     </p>
 
     <div class="row">
@@ -401,11 +403,9 @@
 
       const svgString = buildDielineSVG(desc, L, W, D, C);
 
-      // Show in preview
       const preview = document.getElementById(previewId);
       preview.innerHTML = svgString;
 
-      // Make downloadable
       const blob = new Blob([svgString], { type: "image/svg+xml" });
       const url = URL.createObjectURL(blob);
       const link = document.getElementById(linkId);
@@ -414,19 +414,16 @@
       link.style.display = "inline-block";
     }
 
-    // Base button
     document.getElementById("generateBtn").addEventListener("click", () => {
       generatePiece("description", "length", "width", "depth", "caliper",
                     "preview", "downloadLink", "Base");
     });
 
-    // Lid button
     document.getElementById("generateLidBtn").addEventListener("click", () => {
       generatePiece("descriptionLid", "lengthLid", "widthLid", "depthLid", "caliperLid",
                     "previewLid", "downloadLinkLid", "Lid");
     });
 
-    // ===== Sheet Layout helpers (additive) =====
     function parseSvgInfo(svgString) {
       const m = svgString.match(/viewBox="0 0 ([0-9.]+) ([0-9.]+)"/);
       if (!m) return null;
@@ -448,10 +445,13 @@
       linkEl.style.display = "inline-block";
     }
 
-    // GRAIN GRAPHICS (this is the version with arrows INSIDE the sheet)
+    // CHANGE #2: grain arrows OUTSIDE the sheet
     function sheetGrainGraphics(sheetX, sheetY, sheetW, sheetH, grainDir) {
       const gc = "#0B5394";
       const sw = 0.12;
+
+      // How far outside the sheet to place the grain indicators (inches)
+      const offset = 0.65;
 
       let out = "";
       out += `
@@ -463,8 +463,9 @@
       `;
 
       if (grainDir === "height") {
-        const xL = sheetX + 1.2;
-        const xR = sheetX + sheetW - 1.2;
+        // Vertical grain: arrows just outside left and right edges
+        const xL = sheetX - offset;
+        const xR = sheetX + sheetW + offset;
         const yT = sheetY + 1.0;
         const yB = sheetY + sheetH - 1.0;
 
@@ -474,14 +475,15 @@
         `;
         out += dbl(xL) + dbl(xR);
 
-        const lx = xL + 0.40;
+        const lx = xL - 0.35;
         const ly = (yT + yB) / 2;
         out += `<text x="${lx}" y="${ly}" font-size="0.38" text-anchor="middle"
           fill="${gc}" font-weight="bold" font-family="Arial"
           transform="rotate(90 ${lx} ${ly})">grain</text>`;
       } else {
-        const yT = sheetY + 1.2;
-        const yB = sheetY + sheetH - 1.2;
+        // Horizontal grain: arrows just outside top and bottom edges
+        const yT = sheetY - offset;
+        const yB = sheetY + sheetH + offset;
         const xL = sheetX + 1.0;
         const xR = sheetX + sheetW - 1.0;
 
